@@ -2,10 +2,14 @@
 
 ## Project Site Location:
 **Rudra Block, Government College of Technology (GCT)**  
-[Google Maps Location](#) *(Insert actual link here)*  
+[Google Maps Location](#) *(https://maps.app.goo.gl/fLT6oLrJnmRZ2eJK9)*  
+
+## Project Flowchart
+
+ ![Image](https://github.com/user-attachments/assets/3bf9efc8-6a7d-43ec-bcf6-b532e5c89b2b)
 
 ## Tools & Software Used:
-- **Hardware:** ESP32, BharatPi ESP32 (Master), Waterproof Ultrasonic Sensors  
+- **Hardware:** ESP32(Slave), BharatPi ESP32 with Simcom A7672s (Master), Waterproof Ultrasonic Sensors, Li-ion batteries  
 - **Communication Protocol:** ESP-NOW, MQTT  
 - **Cloud Services:** HiveMQ, Railway.app, InfluxDB  
 - **Visualization:** Grafana  
@@ -23,11 +27,22 @@
 ---
 
 ## Site Overview:
-This section provides an overview of the project location, tank placement, and distances between components.  
+   This section provides an overview of the project location, tank placement, and distances between components.  
+   
+   In the top of Rudra Block, there are two overhead tanks each placed on opposite ends of the block with a distance between of 50m.
+   Each tank has two compartments → One for drinking water supply, other for restroom usage supply and other usages.Both the tank and the compartment dimensions are same.
+   Sensors only for the restroom water supply compartments was placed of both the tanks due to limited funding for our project.
 
 ### **Images & Videos:**
-- **Distance Between Two Tanks:** *(Include the distance diagram image here)*  
-- **Site View Video:** *(Embed the site view video or provide a link)*  
+- **Distance Between Two Tanks:**
+  ![Image](https://github.com/user-attachments/assets/4ce4b185-853e-4aaa-a798-6baeac9dfb81)
+  
+- **Site View Video:**
+  
+   <video src="https://github.com/user-attachments/assets/d28bab54-3d2b-4f83-ab3e-565f98148dd7" controls>
+Your browser does not support the video tag.
+</video>
+
 
 ---
 
@@ -48,50 +63,77 @@ The project is divided into three main tasks:
 
 ---
 
-## Each Task Explained Clearly:
+## Individual Task Explanation:
 
 ### **Task 1 - Data Collection & Communication**
-- **ESP32 Devices & Sensors:**  
-  - Two ultrasonic sensors measure water levels.  
-  - Slave ESP32 collects data and sends it to the Master ESP32 via ESP-NOW.  
-- **Communication Setup:**  
-  - Short-range ESP-NOW wireless communication used between ESP32 devices.  
-
-**Image:** *(Include the flowchart or circuit diagram here)*  
-
+   We placed each ultrasonic sensors connected with ESP32’s on each tank to sense the data current water level and water volume (derived using water level data and surface area which is calculated by dimensions of the tank).
+   
+   Now, for communication between two ESP32’s, we chose ESP NOW which is very reliable over 100m practically if there is no interference like metal, and concrete walls between them. We are going to place the sensors on the top of the Tanks so this condition is ideal for our ESP NOW communication.
+   
+   Next we written code for both the controllers ESP32 and another ESP32 which is BharatPI ESP32 with Simcom module.
+   
+   Here, both the controllers connected with sensors will be connected into a network by ESP NOW where ESP32 act as slave and BharatPi will act as Master.
+   The master will send a signal to the slave ESP32 via ESP NOW. After receiving the signal,  ESP32 will send trigger signal to the sensor to get the water level data from Tank 1 in cm. After the that, slave ESP32 will send the data (water level, water volume) to the BharatPi ESP32 via ESP NOW. After getting the data, the BharatPI will get sensor data from its sensor in Tank 2 and combine all the data (water level and water volume for both tanks) ready to send for the cloud.
+    
 ---
 
 ### **Task 2 - Data Transmission to Cloud**
+
+   After getting the data, the data has to be sent to the cloud database. We faced difficulties for transmission of data from master ESP32 directly to the database. So, we    used MQTT protocol to send the data to Hive MQ private cloud cluster (MQTT broker) via under 5 topics. Topic 1 → water level of tank 1 in cm, Topic 2 → water volume of     tank 1, Topic 3 → water level of tank 2 in cm, Topic 4 → water volume of tank 2 , Topic 5 → current time. These data will sent to the Hive MQ. Then we written a python     that will subscibes to this Hive MQ broker and retrives the data whenever any data is published to broker. After getting all the data from all the topics, the python       code will write the data to InfluxDB as a single row. The python code is deployed in Railway.app website to run as a server 24/7 in the cloud to get the data from the      Broker.
+
+Note: The code for controllers will get the data for every 3 mins from the tank and send the data to broker. The code for the both controllers and server are attached in this repository.
+
 - **MQTT Protocol:**  
   - Data is published from BharatPi ESP32 to HiveMQ cloud broker.  
+
+   ![Image](https://github.com/user-attachments/assets/4e3d8971-7248-4780-8c17-a19e7fec5acd)
+
 - **Python Server on Railway.app:**  
   - Subscribes to MQTT topics and writes data into InfluxDB.  
-- **InfluxDB Database:**  
-  - Stores timestamped water level and consumption data.  
+   ![Image](https://github.com/user-attachments/assets/675ae2d5-047f-434e-a5de-f20f33e29f13)
 
-**Images:**  
-- *(Include MQTT protocol explanation image)*  
-- *(Include HiveMQ cloud cluster screenshot)*  
-- *(Include Railway.app running Python script image)*  
-- *(Include InfluxDB database screenshot)*  
+- **InfluxDB Database:**  
+  - Stores timestamped water level and consumption data. 
+
+   ![Image](https://github.com/user-attachments/assets/3c73f1b5-defe-4a4c-a4b3-0722276302bd) 
 
 ---
 
 ### **Task 3 - Data Visualization & Alerts**
 - **Grafana Dashboard Panels:**  
-  - Panel 1: Live water level monitoring.  
-  - Panel 2: 30-day water consumption trends.  
-  - Panel 3: Leakage detection & low-level alerts.  
+  - Panel 1: Live water level monitoring.
+         For water level monitoring and scheduling time to fill the tank
+         water level for tank 1(left side of Rudra Block), water level for tank 2 (left side of Rudra Block), 
+         Tank 1 motor has to be ON/OFF, Tank 2 motor ON/OFF, Tank 1 filling time with expected filling timestamp, Tank 2 filling time with expected filling timestamp
+    
+   ![Image](https://github.com/user-attachments/assets/c19f4f5a-684a-476e-b37d-a00bd59fd6cb)
+  
+  - Panel 2: 30-day water consumption trends.
+
+    Water consumption for past 30 days, Maximum , minimum, average conumsption amount, max, min conumed days
+    
+   ![Image](https://github.com/user-attachments/assets/8121d071-0879-4852-b6da-ea5448bd8e8a)
+
+  - Panel 3: Leakage detection & low-level alerts.
+    
+    Leakage indicators for both tank 1 and tank 2
+    
+    ![Image](https://github.com/user-attachments/assets/2129e046-50a9-48d0-a5c1-bf6b61e32a4e)
+    
 - **Alert System:**  
   - Telegram bot sends alerts when leaks or low water levels are detected.  
 
-**Images:** *(Include screenshots of each Grafana dashboard panel)*  
+    ![Image](https://github.com/user-attachments/assets/c7bce7fb-d14a-4ad6-97dc-fd82570093b4)
 
 ---
+### Leakage and Alert System with Linear regression:
 
-## Final Output of the Project:
-A complete working system that monitors, visualizes, and alerts users about water consumption and leakages in real-time.
+   This Flux query analyzes tank level data to detect leaks by performing linear regression on the most recent 20 readings from the past readings for every 3 mins ( This      synchronizes with sensor data for every 3mins). It first retrieves tank level measurements, then calculates statistical components (sums, counts, and products) needed      for linear regression analysis. The query then computes the slope, y-intercept, and R-squared value of the tank level trend line. A leak is identified when two             conditions are met simultaneously: the R-squared value exceeds 0.90 (indicating a strong linear correlation) and the slope is less than -0.1 (showing a consistent          downward trend in fluid level). When the two conditions are met, then the indicator will be marked as 1 for each tanks. Then Alert will be sent to Telegram Chats.
 
-**Final Project Video:** *(Embed the final project demonstration video here)*  
+### Low level Alert System:
+   Whenever the tanks level goes below the 40cm, then it will send the alerts to Telegram chat via the bot integrated with Grafana Alerts System.
+
+
+### **Note**: The li-ion batteries setup have to be charged for every 10 days for the ESP32, and every 3 days for the master BharatPI ESP32 controller. The dashboard will be set to refresh for 3 mins where all the Flux Queries will run for every 3 mins and update all the visualisations and make it a real time dashboard. 
 
  

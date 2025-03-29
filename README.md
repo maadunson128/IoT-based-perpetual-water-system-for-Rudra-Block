@@ -94,11 +94,4 @@ A complete working system that monitors, visualizes, and alerts users about wate
 
 **Final Project Video:** *(Embed the final project demonstration video here)*  
 
----
-
-### ✅ **README Structure Highlights:**
-- **Simple and human-readable format**  
-- **Includes all necessary images and videos**  
-- **Clearly structured according to your layout**  
-
-Let me know if you need any final refinements! 🚀  
+ 

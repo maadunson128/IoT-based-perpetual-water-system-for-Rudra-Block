@@ -7,14 +7,7 @@
 ## Project Flowchart
 
  ![Image](https://github.com/user-attachments/assets/3bf9efc8-6a7d-43ec-bcf6-b532e5c89b2b)
-We placed each ultrasonic sensors connected with ESP32’s on each tank to sense the data current water level and water volume (derived using water level data and surface area which is calculated by dimensions of the tank).
 
-Now, for communication between two ESP32’s, we chose ESP NOW which is very reliable over 100m practically if there is no interference like metal, and concrete walls between them. We are going to place the sensors on the top of the Tanks so this condition is ideal for our ESP NOW communication.
-
-Next we written code for both the controllers ESP32 and another ESP32 which is BharatPI ESP32 with Simcom module.
-
-Here, both the controllers connected with sensors will be connected into a network by ESP NOW where ESP32 act as slave and BharatPi will act as Master.
-The master will send a signal to the slave ESP32 via ESP NOW. After receiving the signal,  ESP32 will send trigger signal to the sensor to get the water level data from Tank 1 in cm. After the that, slave ESP32 will send the data (water level, water volume) to the BharatPi ESP32 via ESP NOW. After getting the data, the BharatPI will get sensor data from its sensor in Tank 2 and combine all the data (water level and water volume for both tanks) ready to send for the cloud.
 ## Tools & Software Used:
 - **Hardware:** ESP32(Slave), BharatPi ESP32 with Simcom A7672s (Master), Waterproof Ultrasonic Sensors, Li-ion batteries  
 - **Communication Protocol:** ESP-NOW, MQTT  

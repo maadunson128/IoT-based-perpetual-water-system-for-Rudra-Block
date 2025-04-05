@@ -148,7 +148,7 @@ The master will send a signal to the slave ESP32 via ESP NOW. After receiving th
 
 
 
-**Note**: The li-ion batteries setup have to be charged for every 10 days for the ESP32, and every 3 days for the master BharatPI ESP32 controller. The dashboard will be set to refresh for 3 mins where all the Flux Queries will run for every 3 mins and update all the visualisations and make it a real time dashboard.
+**Note**: The li-ion batteries setup will be charged for every 10 days for the ESP32, and every 3 days for the master BharatPI ESP32 controller. The dashboard will be set to refresh for 3 mins where all the Flux Queries will run for every 3 mins and update all the visualisations and make it a real time dashboard.
 Data collected for some dashboard Visualisations: Tank depth -> 140cm, Time taken to fill the entire tank for the particular compartment -> 45 mins
 
  

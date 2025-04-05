@@ -40,7 +40,6 @@
 - **Site View Video:**
   
    <video src="https://github.com/user-attachments/assets/d28bab54-3d2b-4f83-ab3e-565f98148dd7" controls>
-Your browser does not support the video tag.
 </video>
 
 
@@ -139,6 +138,14 @@ The master will send a signal to the slave ESP32 via ESP NOW. After receiving th
 
 ### Low level Alert System:
    Whenever the tanks level goes below the 40cm, then it will send the alerts to Telegram chat via the bot integrated with Grafana Alerts System.
+
+
+**Project Realtime Output Video:**
+  
+   <video src="https://github.com/user-attachments/assets/8048cf95-15ed-4b13-a5e7-295537d7b784" controls>
+</video>
+
+
 
 
 **Note**: The li-ion batteries setup have to be charged for every 10 days for the ESP32, and every 3 days for the master BharatPI ESP32 controller. The dashboard will be set to refresh for 3 mins where all the Flux Queries will run for every 3 mins and update all the visualisations and make it a real time dashboard.

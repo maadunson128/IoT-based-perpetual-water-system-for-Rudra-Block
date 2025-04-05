@@ -1,6 +1,6 @@
 /*************************************************************************
    PROJECT: Water Tank Monitoring System with MQTT Cloud Integration
-   AUTHOR: Modified for maadunson128
+   AUTHOR: PRADEEP KUMAR G
    DATE: 2025-04-05
    
    FUNC: Monitors water levels in two tanks with deep sleep for power saving

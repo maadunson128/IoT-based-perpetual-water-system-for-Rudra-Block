@@ -1,0 +1,6 @@
+from(bucket: "tank_data")
+  |> range(start: -1h)
+  |> filter(fn: (r) => r._measurement == "tank_monitoring")
+  |> filter(fn: (r) => r._field == "tank1_level_cm")
+  |> last()
+  |> yield(name: "latest")

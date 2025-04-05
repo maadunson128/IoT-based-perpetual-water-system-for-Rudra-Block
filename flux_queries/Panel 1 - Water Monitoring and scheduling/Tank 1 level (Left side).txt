@@ -1,0 +1,7 @@
+// Tank 2 Level Gauge Query
+from(bucket: "tank_data")
+  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+  |> filter(fn: (r) => r._measurement == "tank_monitoring")
+  |> filter(fn: (r) => r._field == "tank1_level_cm")
+  |> last()
+  |> yield(name: "tank1_level")

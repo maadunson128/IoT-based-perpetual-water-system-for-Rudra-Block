@@ -1,0 +1,38 @@
+// Step 1: Compute daily total consumption for Tank 1
+tank1_daily = from(bucket: "tank_data")
+  |> range(start: -30d)
+  |> filter(fn: (r) => r["_measurement"] == "tank_monitoring" and r["_field"] == "tank1_volume_liters")
+  |> aggregateWindow(every: 3m, fn: last)
+  |> difference()
+  |> filter(fn: (r) => r._value < 0)  // Filter for negative differences (consumption)
+  |> map(fn: (r) => ({ r with _value: -1.0 * r._value }))  // Convert to positive values
+  |> aggregateWindow(every: 1d, fn: sum)
+
+// Step 2: Compute daily total consumption for Tank 2
+tank2_daily = from(bucket: "tank_data")
+  |> range(start: -30d)
+  |> filter(fn: (r) => r["_measurement"] == "tank_monitoring" and r["_field"] == "tank2_volume_liters")
+  |> aggregateWindow(every: 3m, fn: last)
+  |> difference()
+  |> filter(fn: (r) => r._value < 0)  // Filter for negative differences (consumption)
+  |> map(fn: (r) => ({ r with _value: -1.0 * r._value }))  // Convert to positive values
+  |> aggregateWindow(every: 1d, fn: sum)
+
+// Combine tank data and output raw daily values for inspection
+all_daily_values = union(tables: [tank1_daily, tank2_daily])
+  |> yield(name: "raw_daily_values")
+
+// Step 3: Calculate combined daily totals properly
+total_daily = union(tables: [tank1_daily, tank2_daily])
+  |> group(columns: ["_time"])
+  |> sum(column: "_value")
+  |> yield(name: "total_per_day")  // Let check these values too
+
+// Step 4: Calculate the average properly, ensuring we include both days
+average_consumption = total_daily
+  |> group()  // Group everything together
+  |> mean(column: "_value")
+  |> set(key: "_measurement", value: "average_consumption")
+  |> set(key: "_field", value: "30day_average") 
+  |> keep(columns: ["_value", "_measurement", "_field"])
+  |> yield(name: "Average_Consumption")

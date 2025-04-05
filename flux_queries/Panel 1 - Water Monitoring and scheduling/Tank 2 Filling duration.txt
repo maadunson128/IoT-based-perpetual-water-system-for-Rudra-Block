@@ -1,0 +1,12 @@
+// Calculate minutes until completion
+from(bucket: "tank_data")
+  |> range(start: -1h)
+  |> filter(fn: (r) => r["_measurement"] == "tank_monitoring")
+  |> filter(fn: (r) => r["_field"] == "tank2_level_cm")
+  |> last()
+  |> map(fn: (r) => ({
+      r with
+      _value: (140.0 - r._value) / (140.0/45.0),
+      units: "minutes"
+     }))
+  |> yield(name: "minutes_to_full")

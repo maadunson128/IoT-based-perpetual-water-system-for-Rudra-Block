@@ -1,0 +1,50 @@
+from(bucket: "tank_data")
+  |> range(start: -1000h)  
+  |> filter(fn: (r) => r._measurement == "tank_monitoring")
+  |> filter(fn: (r) => r._field == "tank2_level_cm")
+  |> tail(n: 20)  // Get the last 20 records for analysis
+  |> group(columns: ["_field"])
+  |> reduce(
+      fn: (r, accumulator) => ({
+        count: accumulator.count + 1.0,
+        sum_y: accumulator.sum_y + r._value,
+        sum_xx: accumulator.sum_xx + (accumulator.count * accumulator.count),
+        sum_xy: accumulator.sum_xy + (accumulator.count * r._value),
+        sum_x: accumulator.sum_x + accumulator.count,
+        sum_yy: accumulator.sum_yy + (r._value * r._value),
+        last_time: r._time,
+        _measurement: r._measurement,
+        _field: r._field
+      }),
+      identity: {
+        count: 0.0,
+        sum_x: 0.0,
+        sum_y: 0.0,
+        sum_xy: 0.0,
+        sum_xx: 0.0,
+        sum_yy: 0.0,
+        last_time: now(),
+        _measurement: "",
+        _field: ""
+      }
+  )
+  |> map(fn: (r) => {
+      numerator = r.sum_xy - (r.sum_x * r.sum_y / r.count)
+      denominator = r.sum_xx - (r.sum_x * r.sum_x / r.count)
+      
+      slope = if denominator != 0.0 then numerator / denominator else 0.0
+      y_intercept = (r.sum_y / r.count) - slope * (r.sum_x / r.count)
+      
+      ss_total = r.sum_yy - ((r.sum_y * r.sum_y) / r.count)
+      ss_explained = if denominator != 0.0 then (numerator * numerator) / denominator else 0.0
+      r_squared = if ss_total != 0.0 then ss_explained / ss_total else 0.0
+      
+      return {
+        _time: r.last_time,
+        _measurement: r._measurement,
+        _field: r._field + "_slope",
+        _value: slope,
+        r_squared: r_squared,
+        is_leak: if r_squared > 0.95 and slope < -0.1 then 1 else 0  // Return 1 for Leak, 0 for No Leak
+      }
+  })

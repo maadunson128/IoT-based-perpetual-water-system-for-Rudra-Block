@@ -1,0 +1,24 @@
+// Get the latest reading and add calculated minutes to current time
+from(bucket: "tank_data")
+  |> range(start: -1h)
+  |> filter(fn: (r) => r["_measurement"] == "tank_monitoring")
+  |> filter(fn: (r) => r["_field"] == "tank2_level_cm")
+  |> last()
+  |> map(fn: (r) => {
+      // Calculate minutes needed to fill
+      minutes_to_full = (140.0 - r._value) / (140.0/45.0)
+      
+      // Convert minutes to nanoseconds (required for time addition)
+      ns_to_full = int(v: minutes_to_full * 60.0 * 1000000000.0)
+      
+      // Calculate the future timestamp
+      current_time = now()
+      future_time = time(v: int(v: current_time) + ns_to_full)
+      
+      return {
+        _time: r._time,
+        _field: "estimated_full_time",
+        _measurement: "tank_predictions",
+        _value: future_time
+      }
+    })

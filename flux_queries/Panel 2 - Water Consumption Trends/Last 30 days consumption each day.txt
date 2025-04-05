@@ -1,0 +1,31 @@
+// Tank 1 consumption calculation
+tank1 = from(bucket: "tank_data")
+  |> range(start: -30d)
+  |> filter(fn: (r) => r["_measurement"] == "tank_monitoring" and r["_field"] == "tank1_volume_liters")
+  |> aggregateWindow(every: 3m, fn: last)
+  |> difference()
+  // Filter for NEGATIVE differences (actual consumption)
+  |> filter(fn: (r) => r._value < 0)
+  // Convert to positive values for display
+  |> map(fn: (r) => ({ r with _value: -1.0 * r._value }))
+  // Aggregate by day
+  |> aggregateWindow(every: 1d, fn: sum, createEmpty: false)
+
+// Tank 2 consumption calculation
+tank2 = from(bucket: "tank_data")
+  |> range(start: -30d)
+  |> filter(fn: (r) => r["_measurement"] == "tank_monitoring" and r["_field"] == "tank2_volume_liters")
+  |> aggregateWindow(every: 3m, fn: last)
+  |> difference()
+  // Filter for NEGATIVE differences (actual consumption)
+  |> filter(fn: (r) => r._value < 0)
+  // Convert to positive values for display
+  |> map(fn: (r) => ({ r with _value: -1.0 * r._value }))
+  // Aggregate by day
+  |> aggregateWindow(every: 1d, fn: sum, createEmpty: false)
+
+// Combine both tanksconsumption
+union(tables: [tank1, tank2])
+  |> group()  // Reset grouping keys to combine data into one series
+  |> aggregateWindow(every: 1d, fn: sum)
+  |> yield(name: "TotalConsumption")

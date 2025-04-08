@@ -4,9 +4,9 @@
 **Rudra Block, Government College of Technology (GCT)**  
 [Google Maps Location](#) *(https://maps.app.goo.gl/fLT6oLrJnmRZ2eJK9)*  
 
-## Project Flowchart
+## Project Flow Diagram
 
- ![Image](https://github.com/user-attachments/assets/3bf9efc8-6a7d-43ec-bcf6-b532e5c89b2b)
+ <img width="2900" alt="Image" src="https://github.com/user-attachments/assets/f2c2f1d6-4290-48ce-9dd2-b38e0fa19043" />
 
 ## Tools & Software Used:
 - **Hardware:** ESP32(Slave), BharatPi ESP32 with Simcom A7672s (Master), Waterproof Ultrasonic Sensors, Li-ion batteries  

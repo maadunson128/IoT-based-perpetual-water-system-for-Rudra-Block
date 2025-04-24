@@ -120,7 +120,8 @@ Note: The code for controllers will get the data for every 3 mins from the tank 
      ![Image](https://github.com/user-attachments/assets/2129e046-50a9-48d0-a5c1-bf6b61e32a4e)
     
 - **Alert System:**  
-  - Telegram bot sends alerts when leaks or low water levels are detected.  
+  - Telegram bot sends alerts when leaks or low, high water levels are detected.
+  
 
     ![Image](https://github.com/user-attachments/assets/c7bce7fb-d14a-4ad6-97dc-fd82570093b4)
 
@@ -138,7 +139,20 @@ The master will send a signal to the slave ESP32 via ESP NOW. After receiving th
 
 ### Low level Alert System:
    Whenever the tanks level goes below the 40cm, then it will send the alerts to Telegram chat via the bot integrated with Grafana Alerts System.
+   
+### High Level Alert System:
+   Telegram bot also sends alerts when the tank water levels are above 120cm while refilling, informing the operator to indicate the tanks are fulled and overcoming water  wastage.
 
+
+
+### Implementation Images in Rudra Block Overhead Tanks
+
+**Left Side Tank project Setup**
+![Image](https://github.com/user-attachments/assets/8c586649-d2c7-4dca-9e79-efdafdfdb3ce)
+
+
+**Right Side Tank project Setup**
+![Image](https://github.com/user-attachments/assets/7311c680-bcf6-432d-96e7-7cc87d00de81)
 
 **Project Realtime Output Video:**
   

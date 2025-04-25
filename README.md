@@ -1,4 +1,4 @@
-# Project Title: IoT-Based Perpetual Water System for Rudra Block
+# Project Title: IoT-Based Perpetual Water Management for Rudra Block
 
 ## Project Site Location:
 **Rudra Block, Government College of Technology (GCT)**  

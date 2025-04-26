@@ -1,7 +1,7 @@
 # Project Title: IoT-Based Smart Water Monitoring and Alert Dashboard
 
 ## Project Site Location:
-**Rudra Block, Government College of Technology (GCT)**  
+**Dr.J.J.Rudra Block, Government College of Technology (GCT)**  
 [Google Maps Location](#) *(https://maps.app.goo.gl/fLT6oLrJnmRZ2eJK9)*  
 
 ## Project Flow Diagram
